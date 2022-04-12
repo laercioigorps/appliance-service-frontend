@@ -1,5 +1,6 @@
-import React, { Component, Suspense } from 'react'
-import { HashRouter, Route, Routes } from 'react-router-dom'
+import React, { Component, Suspense, useState } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import useToken from './components/App/useToken'
 import './scss/style.scss'
 
 const loading = (
@@ -17,22 +18,27 @@ const Register = React.lazy(() => import('./views/pages/register/Register'))
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 
-class App extends Component {
-  render() {
-    return (
-      <HashRouter>
-        <Suspense fallback={loading}>
-          <Routes>
-            <Route exact path="/login" name="Login Page" element={<Login />} />
-            <Route exact path="/register" name="Register Page" element={<Register />} />
-            <Route exact path="/404" name="Page 404" element={<Page404 />} />
-            <Route exact path="/500" name="Page 500" element={<Page500 />} />
+function App() {
+  const { token, setToken } = useToken()
+  console.log(token)
+
+  return (
+    <BrowserRouter>
+      <Suspense fallback={loading}>
+        <Routes>
+          <Route exact path="/login" name="Login Page" element={<Login setToken={setToken} />} />
+          <Route exact path="/register" name="Register Page" element={<Register />} />
+          <Route exact path="/404" name="Page 404" element={<Page404 />} />
+          <Route exact path="/500" name="Page 500" element={<Page500 />} />
+          {!token ? (
+            <Route exact path="*" name="Login Page" element={<Login setToken={setToken} />} />
+          ) : (
             <Route path="*" name="Home" element={<DefaultLayout />} />
-          </Routes>
-        </Suspense>
-      </HashRouter>
-    )
-  }
+          )}
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  )
 }
 
 export default App

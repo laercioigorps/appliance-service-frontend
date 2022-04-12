@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   CButton,
@@ -15,8 +15,63 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
+import PropTypes from 'prop-types'
 
-const Login = () => {
+const login = async (login, password) => {
+  const res = await fetch('https://iginapp.herokuapp.com/rest-auth/login/', {
+    body: JSON.stringify({
+      username: login,
+      password: password,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+  })
+  const result = await res.json()
+  if (result.key) {
+    console.log(result.key)
+    localStorage.setItem('token', result.key)
+  } else {
+    console.log('error')
+    console.log(result)
+  }
+  return result
+}
+
+// const handleSubmit = (event) => {
+//   const form = event.currentTarget
+//   event.preventDefault()
+//   console.log('hello, world')
+//   var username = event.target.username.value
+//   var password = event.target.password.value
+//   const result = login(username, password)
+// }
+
+async function loginUser(credentials) {
+  return fetch('https://iginapp.herokuapp.com/rest-auth/login/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(credentials),
+  }).then((data) => data.json())
+}
+
+const Login = ({ setToken }) => {
+  const [username, setUserName] = useState()
+  const [password, setPassword] = useState()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const token = await loginUser({
+      username,
+      password,
+    })
+    console.log(token)
+    console.log(token.key)
+    setToken({ token: token.key })
+  }
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
@@ -25,14 +80,19 @@ const Login = () => {
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <CForm>
+                  <CForm onSubmit={handleSubmit}>
                     <h1>Login</h1>
                     <p className="text-medium-emphasis">Sign In to your account</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput placeholder="Username" autoComplete="username" />
+                      <CFormInput
+                        placeholder="Username"
+                        autoComplete="username"
+                        name="username"
+                        onChange={(e) => setUserName(e.target.value)}
+                      />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
@@ -42,11 +102,13 @@ const Login = () => {
                         type="password"
                         placeholder="Password"
                         autoComplete="current-password"
+                        name="password"
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton color="primary" className="px-4">
+                        <CButton type="submit" color="primary" className="px-4">
                           Login
                         </CButton>
                       </CCol>
@@ -81,6 +143,10 @@ const Login = () => {
       </CContainer>
     </div>
   )
+}
+
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired,
 }
 
 export default Login

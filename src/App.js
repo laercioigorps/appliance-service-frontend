@@ -26,7 +26,6 @@ function App() {
     <BrowserRouter>
       <Suspense fallback={loading}>
         <Routes>
-          <Route exact path="/login" name="Login Page" element={<Login setToken={setToken} />} />
           <Route
             exact
             path="/register"

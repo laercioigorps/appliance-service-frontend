@@ -17,37 +17,6 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import PropTypes from 'prop-types'
 
-const login = async (login, password) => {
-  const res = await fetch('https://iginapp.herokuapp.com/rest-auth/login/', {
-    body: JSON.stringify({
-      username: login,
-      password: password,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    method: 'POST',
-  })
-  const result = await res.json()
-  if (result.key) {
-    console.log(result.key)
-    localStorage.setItem('token', result.key)
-  } else {
-    console.log('error')
-    console.log(result)
-  }
-  return result
-}
-
-// const handleSubmit = (event) => {
-//   const form = event.currentTarget
-//   event.preventDefault()
-//   console.log('hello, world')
-//   var username = event.target.username.value
-//   var password = event.target.password.value
-//   const result = login(username, password)
-// }
-
 async function loginUser(credentials) {
   return fetch('https://iginapp.herokuapp.com/rest-auth/login/', {
     method: 'POST',

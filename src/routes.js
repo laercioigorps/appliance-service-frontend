@@ -12,6 +12,7 @@ import ApplianceEdit from './views/services/appliances/applianceEdit'
 import ServicePriceEdit from './views/services/price/priceEdit'
 import CreateAddressToCustomer from './views/customers/addresses/createAddress'
 import SelectServiceAddress from './views/services/address/selectServiceAddress'
+import DashboardCopy from './views/dashboard/Dashboard-copy'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -68,6 +69,7 @@ const Logout = React.lazy(() => import('./views/pages/logout/logout'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/dashboard-copy', name: 'Dashboard', element: DashboardCopy },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },

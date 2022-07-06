@@ -1,4 +1,17 @@
 import React from 'react'
+import CustomerCreate from './views/customers/customerCreate'
+import CustomerDetail from './views/customers/customerDetail'
+import CustomerList from './views/customers/customerList'
+import ProblemsEdit from './views/services/problems/problemsEdit'
+import ServiceCreate from './views/services/serviceCreate'
+import ServiceList from './views/services/serviceList'
+import ServiceDetail from './views/services/servicesDetail'
+import SolutionsEdit from './views/services/solutions/solutionsEdit'
+import SymptomsEdit from './views/services/symptoms/symptomsEdit'
+import ApplianceEdit from './views/services/appliances/applianceEdit'
+import ServicePriceEdit from './views/services/price/priceEdit'
+import CreateAddressToCustomer from './views/customers/addresses/createAddress'
+import SelectServiceAddress from './views/services/address/selectServiceAddress'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -99,6 +112,51 @@ const routes = [
   { path: '/widgets', name: 'Widgets', element: Widgets },
   { path: '/teste', name: 'Teste', element: Teste },
   { path: '/logout', name: 'Logout', element: Logout },
+  //customer
+  { path: '/customers/create', name: 'Customer Create', element: CustomerCreate },
+  { path: '/customers/:id', name: 'Customer Detail', element: CustomerDetail, exact: true },
+  {
+    path: '/customers/:id/new-address',
+    name: 'Customer Detail',
+    element: CreateAddressToCustomer,
+    exact: true,
+  },
+  { path: '/customers/', name: 'Customer List', element: CustomerList, exact: true },
+
+  //services
+  { path: '/services', name: 'Service List', element: ServiceList },
+  { path: '/services/create', name: 'Service Create', element: ServiceCreate },
+  { path: '/services/:id', name: 'Service Create', element: ServiceDetail },
+  {
+    path: '/services/:service_id/historic/:historic_id/symptoms/edit',
+    name: 'Symptoms Edit',
+    element: SymptomsEdit,
+  },
+  {
+    path: '/services/:service_id/historic/:historic_id/problems/edit',
+    name: 'Symptoms Edit',
+    element: ProblemsEdit,
+  },
+  {
+    path: '/services/:service_id/historic/:historic_id/solutions/edit',
+    name: 'Symptoms Edit',
+    element: SolutionsEdit,
+  },
+  {
+    path: '/services/:service_id/historic/:historic_id/appliance/edit',
+    name: 'Symptoms Edit',
+    element: ApplianceEdit,
+  },
+  {
+    path: '/services/:service_id/price/edit',
+    name: 'Symptoms Edit',
+    element: ServicePriceEdit,
+  },
+  {
+    path: '/services/:service_id/address/select',
+    name: 'Service Address Select',
+    element: SelectServiceAddress,
+  },
 ]
 
 export default routes

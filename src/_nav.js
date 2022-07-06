@@ -25,22 +25,36 @@ const _nav = [
       text: 'NEW',
     },
   },
+  //services
   {
     component: CNavTitle,
-    name: 'Theme',
+    name: 'Services',
   },
   {
     component: CNavItem,
-    name: 'Colors',
-    to: '/theme/colors',
+    name: 'List',
+    to: '/services/',
     icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
   },
+  //customers
+  {
+    component: CNavTitle,
+    name: 'Customers',
+  },
   {
     component: CNavItem,
-    name: 'Typography',
-    to: '/theme/typography',
+    name: 'Create',
+    to: '/customers/create/',
     icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'List',
+    to: '/customers/',
+    icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
+  },
+
+  //new line
   {
     component: CNavTitle,
     name: 'Components',

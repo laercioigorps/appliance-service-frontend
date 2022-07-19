@@ -246,6 +246,21 @@ const ServiceDetail = () => {
               </CRow>
               <CRow className="mb-3">
                 <CFormLabel htmlFor="profession" className="col-sm-2 col-form-label">
+                  End Date:
+                </CFormLabel>
+                <CCol sm={10}>
+                  <CInputGroup className="mb-3">
+                    <CFormInput
+                      readOnly
+                      type="text"
+                      id="profession"
+                      value={loaded && service && service.end_date ? service.end_date : ''}
+                    />
+                  </CInputGroup>
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CFormLabel htmlFor="profession" className="col-sm-2 col-form-label">
                   Price:
                 </CFormLabel>
                 <CCol sm={10}>

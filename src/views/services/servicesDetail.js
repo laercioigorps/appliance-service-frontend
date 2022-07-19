@@ -24,7 +24,7 @@ import { Button } from '@coreui/coreui'
 import { Link, useLocation, useParams } from 'react-router-dom'
 
 async function getService(id) {
-  return fetch(`http://127.0.0.1:8000/services/${id}`, {
+  return fetch(`http://127.0.0.1:8000/services/${id}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -166,13 +166,7 @@ const ServiceDetail = () => {
                 </CFormLabel>
                 <CCol sm={10}>
                   <CInputGroup className="mb-3">
-                    <CFormInput
-                      readOnly
-                      type="text"
-                      id="phone"
-                      placeHolder="(99) 99999-9999"
-                      value={symptoms}
-                    />
+                    <CFormInput readOnly type="text" id="phone" value={symptoms} />
                     <Link
                       to={loaded && service ? `historic/${service.historic.id}/symptoms/edit` : ''}
                     >
@@ -189,13 +183,7 @@ const ServiceDetail = () => {
                 </CFormLabel>
                 <CCol sm={10}>
                   <CInputGroup className="mb-3">
-                    <CFormInput
-                      readOnly
-                      type="text"
-                      id="phone"
-                      placeHolder="(99) 99999-9999"
-                      value={problems}
-                    />
+                    <CFormInput readOnly type="text" id="phone" value={problems} />
                     <Link
                       to={loaded && service ? `historic/${service.historic.id}/problems/edit` : ''}
                     >
@@ -212,13 +200,7 @@ const ServiceDetail = () => {
                 </CFormLabel>
                 <CCol sm={10}>
                   <CInputGroup className="mb-3">
-                    <CFormInput
-                      readOnly
-                      type="text"
-                      id="phone"
-                      placeHolder="(99) 99999-9999"
-                      value={solutions}
-                    />
+                    <CFormInput readOnly type="text" id="phone" value={solutions} />
                     <Link
                       to={loaded && service ? `historic/${service.historic.id}/solutions/edit` : ''}
                     >
@@ -240,11 +222,9 @@ const ServiceDetail = () => {
                       aria-describedby="button-addon2"
                       type="text"
                       id="inputEmail3"
-                      value={loaded && service && service.status ? service.status : 'none'}
+                      value={loaded && service && service.status ? service.status.name : 'none'}
                     />
-                    <Link
-                      to={loaded && service ? `historic/${service.historic.id}/appliance/edit` : ''}
-                    >
+                    <Link to={loaded && service ? `status/edit` : ''}>
                       <CButton type="button" color="secondary" variant="outline" id="button-addon2">
                         Change
                       </CButton>

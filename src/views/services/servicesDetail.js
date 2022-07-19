@@ -230,6 +230,29 @@ const ServiceDetail = () => {
                 </CCol>
               </CRow>
               <CRow className="mb-3">
+                <CFormLabel htmlFor="inputEmail3" className="col-sm-2 col-form-label">
+                  Status:
+                </CFormLabel>
+                <CCol sm={10}>
+                  <CInputGroup className="mb-3">
+                    <CFormInput
+                      readOnly
+                      aria-describedby="button-addon2"
+                      type="text"
+                      id="inputEmail3"
+                      value={loaded && service && service.status ? service.status : 'none'}
+                    />
+                    <Link
+                      to={loaded && service ? `historic/${service.historic.id}/appliance/edit` : ''}
+                    >
+                      <CButton type="button" color="secondary" variant="outline" id="button-addon2">
+                        Change
+                      </CButton>
+                    </Link>
+                  </CInputGroup>
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
                 <CFormLabel htmlFor="profession" className="col-sm-2 col-form-label">
                   Start Date:
                 </CFormLabel>
@@ -244,6 +267,7 @@ const ServiceDetail = () => {
                   </CInputGroup>
                 </CCol>
               </CRow>
+
               <CRow className="mb-3">
                 <CFormLabel htmlFor="profession" className="col-sm-2 col-form-label">
                   End Date:

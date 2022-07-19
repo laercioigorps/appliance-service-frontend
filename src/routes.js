@@ -13,6 +13,7 @@ import ServicePriceEdit from './views/services/price/priceEdit'
 import CreateAddressToCustomer from './views/customers/addresses/createAddress'
 import SelectServiceAddress from './views/services/address/selectServiceAddress'
 import DashboardCopy from './views/dashboard/Dashboard-copy'
+import StatusEdit from './views/services/status/statusEdit'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -158,6 +159,11 @@ const routes = [
     path: '/services/:service_id/address/select',
     name: 'Service Address Select',
     element: SelectServiceAddress,
+  },
+  {
+    path: '/services/:service_id/status/edit',
+    name: 'Status Edit',
+    element: StatusEdit,
   },
 ]
 

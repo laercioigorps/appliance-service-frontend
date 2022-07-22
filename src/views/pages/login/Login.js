@@ -18,7 +18,7 @@ import { cilLockLocked, cilUser } from '@coreui/icons'
 import PropTypes from 'prop-types'
 
 async function loginUser(credentials) {
-  return fetch('https://iginapp.herokuapp.com/rest-auth/login/', {
+  return fetch('http://127.0.0.1:8000/dj-rest-auth/login/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

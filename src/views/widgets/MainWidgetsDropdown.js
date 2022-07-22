@@ -13,8 +13,26 @@ import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
 
+function divideMatrix(matrix1, matrix2) {
+  let mat = []
+  for (let i = 0; i < matrix1.length; i++) {
+    mat.push(matrix1[i] / matrix2[i])
+  }
+  return mat
+}
+
 async function getCustomerHistory() {
   return fetch('http://127.0.0.1:8000/profiles/customer-history', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Token ' + localStorage.getItem('token'),
+    },
+  }).then((data) => data.json())
+}
+
+async function getServiceHistory() {
+  return fetch('http://127.0.0.1:8000/services/service-history', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -31,6 +49,16 @@ const MainWidgetsDropdown = () => {
   const [customerTotal, setCustomerTotal] = useState(0)
   const [customerDifference, setCustomerDifference] = useState(10)
 
+  const [incomeHistoryData, setIncomeHistoryData] = useState(false)
+  const [incomeHistoryLabels, setIncomeHistoryLabels] = useState(false)
+  const [incomeDifference, setIncomeDifference] = useState(10)
+
+  const [serviceCountHistoryData, setServiceCountHistoryData] = useState(false)
+  const [serviceCountDataDifference, setServiceCountDataDifference] = useState(false)
+
+  const [incomePerServicesData, setIncomePerServicesData] = useState(false)
+  const [incomePerServicesDifference, setIncomePerServicesDifference] = useState(false)
+
   useEffect(() => {
     if (!loaded) {
       getCustomerHistory().then((history) => {
@@ -39,6 +67,19 @@ const MainWidgetsDropdown = () => {
         setCustomerLabels(history.labels)
         setCustomerTotal(history.total)
         calculateDiff(history.data)
+        setCustomerDifference(calculateDiff(history.data).toFixed(2))
+      })
+      getServiceHistory().then((history) => {
+        setIncomeHistoryData(history.incomeHistoryData)
+        setIncomeHistoryLabels(history.incomeHistoryLabels)
+        setIncomeDifference(calculateDiff(history.incomeHistoryData).toFixed(2))
+
+        setServiceCountHistoryData(history.serviceCountHistoryData)
+        setServiceCountDataDifference(calculateDiff(history.serviceCountHistoryData).toFixed(2))
+
+        let incPerService = divideMatrix(history.incomeHistoryData, history.serviceCountHistoryData)
+        setIncomePerServicesData(incPerService)
+        setIncomePerServicesDifference(calculateDiff(incPerService).toFixed(2))
       })
       setLoaded(true)
     }
@@ -47,7 +88,7 @@ const MainWidgetsDropdown = () => {
   function calculateDiff(arr) {
     let now = arr[arr.length - 1]
     let last = arr[arr.length - 2]
-    setCustomerDifference(((now - last) / last) * 100)
+    return ((now - last) / last) * 100
   }
 
   return (
@@ -148,9 +189,10 @@ const MainWidgetsDropdown = () => {
           color="info"
           value={
             <>
-              $6.200{' '}
+              ${incomeHistoryData ? incomeHistoryData[incomeHistoryData.length - 1] : '00.0'}{' '}
               <span className="fs-6 fw-normal">
-                (40.9% <CIcon icon={cilArrowTop} />)
+                ({incomeDifference}%{' '}
+                <CIcon icon={incomeDifference > 0 ? cilArrowTop : cilArrowBottom} />)
               </span>
             </>
           }
@@ -173,14 +215,16 @@ const MainWidgetsDropdown = () => {
               className="mt-3 mx-3"
               style={{ height: '70px' }}
               data={{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: incomeHistoryLabels
+                  ? incomeHistoryLabels
+                  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                 datasets: [
                   {
                     label: 'My First dataset',
                     backgroundColor: 'transparent',
                     borderColor: 'rgba(255,255,255,.55)',
                     pointBackgroundColor: getStyle('--cui-info'),
-                    data: [1, 18, 9, 17, 34, 22, 11],
+                    data: incomeHistoryData ? incomeHistoryData : [1, 18, 9, 17, 34, 22, 11],
                   },
                 ],
               }}
@@ -202,8 +246,8 @@ const MainWidgetsDropdown = () => {
                     },
                   },
                   y: {
-                    min: -9,
-                    max: 39,
+                    min: incomeHistoryData ? Math.min(...incomeHistoryData) - 100 : 0,
+                    max: incomeHistoryData ? Math.max(...incomeHistoryData) + 100 : 40,
                     display: false,
                     grid: {
                       display: false,
@@ -234,13 +278,16 @@ const MainWidgetsDropdown = () => {
           color="warning"
           value={
             <>
-              2.49{' '}
+              {serviceCountHistoryData
+                ? serviceCountHistoryData[serviceCountHistoryData.length - 1]
+                : ''}{' '}
               <span className="fs-6 fw-normal">
-                (84.7% <CIcon icon={cilArrowTop} />)
+                ({serviceCountDataDifference}%{' '}
+                <CIcon icon={serviceCountDataDifference > 0 ? cilArrowTop : cilArrowBottom} />)
               </span>
             </>
           }
-          title="Conversion Rate"
+          title="Services count"
           action={
             <CDropdown alignment="end">
               <CDropdownToggle color="transparent" caret={false} className="p-0">
@@ -259,13 +306,17 @@ const MainWidgetsDropdown = () => {
               className="mt-3"
               style={{ height: '70px' }}
               data={{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: incomeHistoryLabels
+                  ? incomeHistoryLabels
+                  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                 datasets: [
                   {
                     label: 'My First dataset',
-                    backgroundColor: 'rgba(255,255,255,.2)',
-                    borderColor: 'rgba(255,255,255,.55)',
-                    data: [78, 81, 80, 45, 34, 12, 40],
+                    backgroundColor: 'transparent',
+                    pointBackgroundColor: getStyle('--cui-warning'),
+                    data: serviceCountHistoryData
+                      ? serviceCountHistoryData
+                      : [78, 81, 80, 45, 34, 12, 40],
                     fill: true,
                   },
                 ],
@@ -279,19 +330,32 @@ const MainWidgetsDropdown = () => {
                 maintainAspectRatio: false,
                 scales: {
                   x: {
-                    display: false,
+                    grid: {
+                      display: false,
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
                   },
                   y: {
+                    min: serviceCountHistoryData ? Math.min(...serviceCountHistoryData) - 1 : 0,
+                    max: serviceCountHistoryData ? Math.max(...serviceCountHistoryData) + 1 : 40,
                     display: false,
+                    grid: {
+                      display: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
                   },
                 },
                 elements: {
                   line: {
-                    borderWidth: 2,
-                    tension: 0.4,
+                    borderWidth: 1,
                   },
                   point: {
-                    radius: 0,
+                    radius: 4,
                     hitRadius: 10,
                     hoverRadius: 4,
                   },
@@ -307,13 +371,17 @@ const MainWidgetsDropdown = () => {
           color="danger"
           value={
             <>
-              44K{' '}
+              {'$ '}
+              {incomePerServicesData
+                ? incomePerServicesData[incomePerServicesData.length - 1]
+                : '0'}{' '}
               <span className="fs-6 fw-normal">
-                (-23.6% <CIcon icon={cilArrowBottom} />)
+                ({incomePerServicesDifference}%{' '}
+                <CIcon icon={incomePerServicesDifference > 0 ? cilArrowTop : cilArrowBottom} />)
               </span>
             </>
           }
-          title="Sessions"
+          title="Income / Services"
           action={
             <CDropdown alignment="end">
               <CDropdownToggle color="transparent" caret={false} className="p-0">
@@ -328,35 +396,22 @@ const MainWidgetsDropdown = () => {
             </CDropdown>
           }
           chart={
-            <CChartBar
+            <CChartLine
               className="mt-3 mx-3"
               style={{ height: '70px' }}
               data={{
-                labels: [
-                  'January',
-                  'February',
-                  'March',
-                  'April',
-                  'May',
-                  'June',
-                  'July',
-                  'August',
-                  'September',
-                  'October',
-                  'November',
-                  'December',
-                  'January',
-                  'February',
-                  'March',
-                  'April',
-                ],
+                labels: incomeHistoryLabels
+                  ? incomeHistoryLabels
+                  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                 datasets: [
                   {
                     label: 'My First dataset',
-                    backgroundColor: 'rgba(255,255,255,.2)',
+                    backgroundColor: 'transparent',
                     borderColor: 'rgba(255,255,255,.55)',
-                    data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
-                    barPercentage: 0.6,
+                    pointBackgroundColor: getStyle('--cui-danger'),
+                    data: serviceCountHistoryData
+                      ? incomePerServicesData
+                      : [78, 81, 80, 45, 34, 12, 40],
                   },
                 ],
               }}
@@ -371,21 +426,30 @@ const MainWidgetsDropdown = () => {
                   x: {
                     grid: {
                       display: false,
-                      drawTicks: false,
+                      drawBorder: false,
                     },
                     ticks: {
                       display: false,
                     },
                   },
                   y: {
+                    display: false,
                     grid: {
                       display: false,
-                      drawBorder: false,
-                      drawTicks: false,
                     },
                     ticks: {
                       display: false,
                     },
+                  },
+                },
+                elements: {
+                  line: {
+                    borderWidth: 1,
+                  },
+                  point: {
+                    radius: 4,
+                    hitRadius: 10,
+                    hoverRadius: 4,
                   },
                 },
               }}

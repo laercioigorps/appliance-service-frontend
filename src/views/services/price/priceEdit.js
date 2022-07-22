@@ -14,7 +14,7 @@ import {
 import { useParams } from 'react-router-dom'
 
 async function updatePrice(service_id, bd) {
-  return fetch(`http://127.0.0.1:8000/services/${service_id}`, {
+  return fetch(`http://127.0.0.1:8000/services/${service_id}/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

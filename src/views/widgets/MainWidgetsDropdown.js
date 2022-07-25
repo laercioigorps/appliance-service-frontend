@@ -313,6 +313,7 @@ const MainWidgetsDropdown = () => {
                   {
                     label: 'My First dataset',
                     backgroundColor: 'transparent',
+                    borderColor: 'rgba(255,255,255,.55)',
                     pointBackgroundColor: getStyle('--cui-warning'),
                     data: serviceCountHistoryData
                       ? serviceCountHistoryData

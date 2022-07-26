@@ -32,6 +32,26 @@ async function getServiceStatus(days) {
   }).then((data) => data.json())
 }
 
+async function getTopCustomersIncome(quantity) {
+  return fetch(`http://127.0.0.1:8000/services/top-customers-income/${quantity}/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Token ' + localStorage.getItem('token'),
+    },
+  }).then((data) => data.json())
+}
+
+async function getTopCustomersServices(quantity) {
+  return fetch(`http://127.0.0.1:8000/services/top-customers-services/${quantity}/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Token ' + localStorage.getItem('token'),
+    },
+  }).then((data) => data.json())
+}
+
 const Dashboard = () => {
   const [loaded, setLoaded] = useState(false)
 
@@ -40,6 +60,9 @@ const Dashboard = () => {
 
   const [serviceStatusData90, setServiceStatusData90] = useState()
   const [serviceStatusLabels90, setServiceStatusLabels90] = useState()
+
+  const [topCustomersIncome, setTopCustomersIncome] = useState()
+  const [topCustomersServices, setTopCustomersServices] = useState()
 
   useEffect(() => {
     if (!loaded) {
@@ -53,52 +76,53 @@ const Dashboard = () => {
         setServiceStatusLabels90(response.labels)
         console.log(response)
       })
+      getTopCustomersIncome(5).then((customers) => {
+        console.log(customers)
+        setTopCustomersIncome(customers)
+      })
+      getTopCustomersServices(5).then((customers) => {
+        setTopCustomersServices(customers)
+        console.log(customers)
+      })
       setLoaded(true)
     }
   })
-  const columns = [
-    {
-      key: 'id',
-      label: '#',
-      _props: { scope: 'col' },
-    },
-    {
-      key: 'class',
-      _props: { scope: 'col' },
-    },
-    {
-      key: 'heading_1',
-      label: 'Heading',
-      _props: { scope: 'col' },
-    },
-    {
-      key: 'heading_2',
-      label: 'Heading',
-      _props: { scope: 'col' },
-    },
-  ]
-  const items = [
-    {
-      id: 1,
-      class: 'Mark',
-      heading_1: 'Otto',
-      heading_2: '@mdo',
-      _cellProps: { id: { scope: 'row' } },
-    },
-    {
-      id: 2,
-      class: 'Jacob',
-      heading_1: 'Thornton',
-      heading_2: '@fat',
-      _cellProps: { id: { scope: 'row' } },
-    },
-    {
-      id: 3,
-      class: 'Larry the Bird',
-      heading_2: '@twitter',
-      _cellProps: { id: { scope: 'row' }, class: { colSpan: 2 } },
-    },
-  ]
+
+  const topCustomersIncomeTable = topCustomersIncome ? (
+    topCustomersIncome.map((customer) => (
+      <CTableRow key={customer.customer__id}>
+        <CTableHeaderCell scope="row">{customer.customer__id}</CTableHeaderCell>
+        <CTableDataCell>{customer.customer__name}</CTableDataCell>
+        <CTableDataCell>{customer.income}</CTableDataCell>
+        <CTableDataCell>{customer.services}</CTableDataCell>
+      </CTableRow>
+    ))
+  ) : (
+    <CTableRow>
+      <CTableHeaderCell scope="row">-</CTableHeaderCell>
+      <CTableDataCell>-</CTableDataCell>
+      <CTableDataCell>-</CTableDataCell>
+      <CTableDataCell>-</CTableDataCell>
+    </CTableRow>
+  )
+
+  const topCustomersServicesTable = topCustomersServices ? (
+    topCustomersServices.map((customer) => (
+      <CTableRow key={customer.customer__id}>
+        <CTableHeaderCell scope="row">{customer.customer__id}</CTableHeaderCell>
+        <CTableDataCell>{customer.customer__name}</CTableDataCell>
+        <CTableDataCell>{customer.services}</CTableDataCell>
+        <CTableDataCell>{customer.income}</CTableDataCell>
+      </CTableRow>
+    ))
+  ) : (
+    <CTableRow>
+      <CTableHeaderCell scope="row">-</CTableHeaderCell>
+      <CTableDataCell>-</CTableDataCell>
+      <CTableDataCell>-</CTableDataCell>
+      <CTableDataCell>-</CTableDataCell>
+    </CTableRow>
+  )
 
   return (
     <>
@@ -148,6 +172,44 @@ const Dashboard = () => {
                   }}
                   labels="months"
                 />
+              </CCard>
+            </CCol>
+          </CRow>
+        </CCardBody>
+      </CCard>
+      <CCard className="mb-4">
+        <CCardBody>
+          <CRow>
+            <CCol sm={6}>
+              <CCard className="mb-4">
+                <CTable caption="top">
+                  <CTableCaption>Top Income Customers</CTableCaption>
+                  <CTableHead>
+                    <CTableRow>
+                      <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Name</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Income</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Services</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>{topCustomersIncomeTable}</CTableBody>
+                </CTable>
+              </CCard>
+            </CCol>
+            <CCol sm={6}>
+              <CCard className="mb-4">
+                <CTable caption="top">
+                  <CTableCaption>Top Services Customers</CTableCaption>
+                  <CTableHead>
+                    <CTableRow>
+                      <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Name</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Services</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Income</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>{topCustomersServicesTable}</CTableBody>
+                </CTable>
               </CCard>
             </CCol>
           </CRow>

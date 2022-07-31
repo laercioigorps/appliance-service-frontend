@@ -17,9 +17,10 @@ import {
 } from '@coreui/react'
 import { DocsCallout, DocsExample } from 'src/components'
 import { Link } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
 
 async function listServices() {
-  return fetch('http://127.0.0.1:8000/services', {
+  return fetch(`${API_URL}/services/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

@@ -102,8 +102,7 @@ const CustomerDetail = () => {
             <CFormInput
               type="text"
               id="profession"
-              onChange={(e) => setProfession(e.target.value)}
-              value={address.street}
+              value={`Street ${address.street} number ${address.number} - ${address.neighborhood}`}
             />
           </CCol>
         </CRow>

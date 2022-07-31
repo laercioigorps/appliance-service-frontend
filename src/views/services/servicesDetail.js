@@ -22,18 +22,22 @@ import {
 import { DocsCallout, DocsExample } from 'src/components'
 import { Button } from '@coreui/coreui'
 import { Link, useLocation, useParams } from 'react-router-dom'
+import useToken from 'src/components/App/useToken'
+import { API_URL } from 'src/components/App/urls'
 
-async function getService(id) {
-  return fetch(`http://127.0.0.1:8000/services/${id}/`, {
+async function getService(id, token) {
+  return fetch(`${API_URL}/services/${id}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const ServiceDetail = () => {
+  const { token } = useToken()
+
   const { id } = useParams()
 
   const [service, setService] = useState()
@@ -41,7 +45,7 @@ const ServiceDetail = () => {
 
   useEffect(() => {
     if (!loaded) {
-      getService(id).then((c) => {
+      getService(id, token).then((c) => {
         setService(c)
         setLoaded(true)
       })

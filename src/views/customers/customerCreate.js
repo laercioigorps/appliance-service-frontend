@@ -20,19 +20,23 @@ import {
 } from '@coreui/react'
 import { DocsCallout, DocsExample } from 'src/components'
 import { useNavigate } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function createCustomer(body) {
-  return fetch('http://127.0.0.1:8000/profiles/customers/', {
+async function createCustomer(body, token) {
+  return fetch(`${API_URL}/profiles/customers/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify(body),
   }).then((data) => data.json())
 }
 
 const CustomerCreate = () => {
+  const { token } = useToken()
+
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
@@ -42,9 +46,12 @@ const CustomerCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    createCustomer({
-      name,
-    }).then((customer) => navigate(`/customers/${customer.id}`))
+    createCustomer(
+      {
+        name,
+      },
+      token,
+    ).then((customer) => navigate(`/customers/${customer.id}`))
   }
 
   return (

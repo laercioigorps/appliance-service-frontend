@@ -18,34 +18,38 @@ import {
 import { DocsCallout, DocsExample } from 'src/components'
 import { Button } from '@coreui/coreui'
 import { Link, useNavigate } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function listCustomer() {
-  return fetch('http://127.0.0.1:8000/profiles/customers/', {
+async function listCustomer(token) {
+  return fetch(`${API_URL}/profiles/customers/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function createService(customer_id) {
-  return fetch(`http://127.0.0.1:8000/services/customer/${customer_id}`, {
+async function createService(customer_id, token) {
+  return fetch(`${API_URL}/services/customer/${customer_id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const CustomerList = () => {
+  const { token } = useToken()
+
   const navigate = useNavigate()
 
   const [customers, setCustomers] = useState([])
   const [mounted, setMounted] = useState(false)
   useEffect(() => {
-    listCustomer().then((customers) => {
+    listCustomer(token).then((customers) => {
       if (!mounted) {
         setMounted(true)
         setCustomers(customers)
@@ -55,7 +59,7 @@ const CustomerList = () => {
   })
 
   const handleServiceSubmit = (customer_id) => {
-    createService(customer_id).then((service) => {
+    createService(customer_id, token).then((service) => {
       navigate(`/services/${service.id}`)
     })
   }

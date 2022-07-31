@@ -21,33 +21,34 @@ import {
 } from '@coreui/react'
 import { CChart } from '@coreui/react-chartjs'
 import MainWidgetsDropdown from '../widgets/MainWidgetsDropdown'
+import useToken from 'src/components/App/useToken'
 
-async function getServiceStatus(days) {
+async function getServiceStatus(days, token) {
   return fetch(`http://127.0.0.1:8000/services/services-by-status/${days}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getTopCustomersIncome(quantity) {
+async function getTopCustomersIncome(quantity, token) {
   return fetch(`http://127.0.0.1:8000/services/top-customers-income/${quantity}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getTopCustomersServices(quantity) {
+async function getTopCustomersServices(quantity, token) {
   return fetch(`http://127.0.0.1:8000/services/top-customers-services/${quantity}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
@@ -64,23 +65,25 @@ const Dashboard = () => {
   const [topCustomersIncome, setTopCustomersIncome] = useState()
   const [topCustomersServices, setTopCustomersServices] = useState()
 
+  const { token } = useToken()
+
   useEffect(() => {
     if (!loaded) {
-      getServiceStatus(30).then((response) => {
+      getServiceStatus(30, token).then((response) => {
         setServiceStatusData30(response.data)
         setServiceStatusLabels30(response.labels)
         console.log(response)
       })
-      getServiceStatus(90).then((response) => {
+      getServiceStatus(90, token).then((response) => {
         setServiceStatusData90(response.data)
         setServiceStatusLabels90(response.labels)
         console.log(response)
       })
-      getTopCustomersIncome(5).then((customers) => {
+      getTopCustomersIncome(5, token).then((customers) => {
         console.log(customers)
         setTopCustomersIncome(customers)
       })
-      getTopCustomersServices(5).then((customers) => {
+      getTopCustomersServices(5, token).then((customers) => {
         setTopCustomersServices(customers)
         console.log(customers)
       })
@@ -144,7 +147,7 @@ const Dashboard = () => {
                         backgroundColor: '#0000FF',
                         data: serviceStatusData30
                           ? serviceStatusData30
-                          : [40, 20, 12, 39, 10, 40, 39, 80, 40],
+                          : [0, 0, 0, 0, 0, 0, 0, 0, 0],
                       },
                     ],
                   }}
@@ -166,7 +169,7 @@ const Dashboard = () => {
                         backgroundColor: '#f87979',
                         data: serviceStatusData90
                           ? serviceStatusData90
-                          : [40, 20, 12, 39, 10, 40, 39, 80, 40],
+                          : [0, 0, 0, 0, 0, 0, 0, 0, 0],
                       },
                     ],
                   }}

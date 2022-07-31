@@ -11,39 +11,43 @@ import {
   CRow,
 } from '@coreui/react'
 import { useParams } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function updateSolutions(historic_id, bd) {
-  return fetch(`http://127.0.0.1:8000/appliances/historics/${historic_id}/`, {
+async function updateSolutions(historic_id, bd, token) {
+  return fetch(`${API_URL}/appliances/historics/${historic_id}/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify(bd),
   }).then((data) => data.json())
 }
 
-async function listSolutions() {
-  return fetch('http://127.0.0.1:8000/appliances/solutions', {
+async function listSolutions(token) {
+  return fetch(`${API_URL}/appliances/solutions`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getHistoric(id) {
-  return fetch(`http://127.0.0.1:8000/appliances/historics/${id}`, {
+async function getHistoric(id, token) {
+  return fetch(`${API_URL}/appliances/historics/${id}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const SolutionsEdit = () => {
+  const { token } = useToken()
+
   const { service_id, historic_id } = useParams()
 
   const [solutions, setSolutions] = useState()
@@ -55,10 +59,10 @@ const SolutionsEdit = () => {
   useEffect(() => {
     if (!loaded) {
       setLoaded(true)
-      listSolutions().then((symp) => {
+      listSolutions(token).then((symp) => {
         setSolutions(symp)
       })
-      getHistoric(historic_id).then((c) => {
+      getHistoric(historic_id, token).then((c) => {
         setMySolutions(c.solutions)
       })
     }
@@ -79,7 +83,7 @@ const SolutionsEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     let body = { solutions: mySolutions }
-    updateSolutions(historic_id, body).then((solutions) => {
+    updateSolutions(historic_id, body, token).then((solutions) => {
       if (solutions) {
         navigate(`/services/${service_id}`)
       } else {

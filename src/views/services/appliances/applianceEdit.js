@@ -12,39 +12,43 @@ import {
   CRow,
 } from '@coreui/react'
 import { useParams } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function updateAppliance(historic_id, bd) {
-  return fetch(`http://127.0.0.1:8000/appliances/historics/${historic_id}/`, {
+async function updateAppliance(historic_id, bd, token) {
+  return fetch(`${API_URL}/appliances/historics/${historic_id}/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify(bd),
   }).then((data) => data.json())
 }
 
-async function listAppliances() {
-  return fetch('http://127.0.0.1:8000/appliances/', {
+async function listAppliances(token) {
+  return fetch(`${API_URL}/appliances/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getHistoric(id) {
-  return fetch(`http://127.0.0.1:8000/appliances/historics/${id}`, {
+async function getHistoric(id, token) {
+  return fetch(`${API_URL}/appliances/historics/${id}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const ApplianceEdit = () => {
+  const { token } = useToken()
+
   const { service_id, historic_id } = useParams()
   const [appliances, setAppliances] = useState()
   const [loaded, setLoaded] = useState(false)
@@ -55,9 +59,9 @@ const ApplianceEdit = () => {
 
   useEffect(() => {
     if (!loaded) {
-      listAppliances().then((ap) => {
+      listAppliances(token).then((ap) => {
         setAppliances(ap)
-        getHistoric(historic_id).then((h) => {
+        getHistoric(historic_id, token).then((h) => {
           if (h.appliance) {
             setMyAppliance(h.appliance.id)
           } else {
@@ -82,7 +86,7 @@ const ApplianceEdit = () => {
     let body = {
       appliance: myAppliance,
     }
-    updateAppliance(historic_id, body).then((historic) => {
+    updateAppliance(historic_id, body, token).then((historic) => {
       if (historic) {
         navigate(`/services/${service_id}`)
       } else {

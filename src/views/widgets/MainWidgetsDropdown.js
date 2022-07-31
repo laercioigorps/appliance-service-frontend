@@ -12,6 +12,7 @@ import { getStyle } from '@coreui/utils'
 import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
+import useToken from 'src/components/App/useToken'
 
 function divideMatrix(matrix1, matrix2) {
   let mat = []
@@ -21,27 +22,29 @@ function divideMatrix(matrix1, matrix2) {
   return mat
 }
 
-async function getCustomerHistory() {
+async function getCustomerHistory(token) {
   return fetch('http://127.0.0.1:8000/profiles/customer-history', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getServiceHistory() {
+async function getServiceHistory(token) {
   return fetch('http://127.0.0.1:8000/services/service-history', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const MainWidgetsDropdown = () => {
+  const { token } = useToken()
+
   const [loaded, setLoaded] = useState(false)
 
   const [customerLabels, setCustomerLabels] = useState(false)
@@ -61,7 +64,7 @@ const MainWidgetsDropdown = () => {
 
   useEffect(() => {
     if (!loaded) {
-      getCustomerHistory().then((history) => {
+      getCustomerHistory(token).then((history) => {
         console.log(history)
         setCustomerData(history.data)
         setCustomerLabels(history.labels)
@@ -69,7 +72,7 @@ const MainWidgetsDropdown = () => {
         calculateDiff(history.data)
         setCustomerDifference(calculateDiff(history.data).toFixed(2))
       })
-      getServiceHistory().then((history) => {
+      getServiceHistory(token).then((history) => {
         setIncomeHistoryData(history.incomeHistoryData)
         setIncomeHistoryLabels(history.incomeHistoryLabels)
         setIncomeDifference(calculateDiff(history.incomeHistoryData).toFixed(2))
@@ -134,7 +137,7 @@ const MainWidgetsDropdown = () => {
                     backgroundColor: 'transparent',
                     borderColor: 'rgba(255,255,255,.55)',
                     pointBackgroundColor: getStyle('--cui-primary'),
-                    data: customerData ? customerData : [65, 59, 84, 84, 51, 55, 40],
+                    data: customerData ? customerData : [0, 0, 0, 0, 0, 0, 0],
                   },
                 ],
               }}
@@ -156,8 +159,8 @@ const MainWidgetsDropdown = () => {
                     },
                   },
                   y: {
-                    min: loaded && customerData ? Math.min(...customerData) - 5 : 40,
-                    max: loaded && customerData ? Math.max(...customerData) + 5 : 70,
+                    min: loaded && customerData ? Math.min(...customerData) - 5 : -1,
+                    max: loaded && customerData ? Math.max(...customerData) + 5 : 1,
                     display: false,
                     grid: {
                       display: false,
@@ -224,7 +227,7 @@ const MainWidgetsDropdown = () => {
                     backgroundColor: 'transparent',
                     borderColor: 'rgba(255,255,255,.55)',
                     pointBackgroundColor: getStyle('--cui-info'),
-                    data: incomeHistoryData ? incomeHistoryData : [1, 18, 9, 17, 34, 22, 11],
+                    data: incomeHistoryData ? incomeHistoryData : [0, 0, 0, 0, 0, 0, 0],
                   },
                 ],
               }}
@@ -246,8 +249,8 @@ const MainWidgetsDropdown = () => {
                     },
                   },
                   y: {
-                    min: incomeHistoryData ? Math.min(...incomeHistoryData) - 100 : 0,
-                    max: incomeHistoryData ? Math.max(...incomeHistoryData) + 100 : 40,
+                    min: incomeHistoryData ? Math.min(...incomeHistoryData) - 100 : -1,
+                    max: incomeHistoryData ? Math.max(...incomeHistoryData) + 100 : 1,
                     display: false,
                     grid: {
                       display: false,
@@ -315,9 +318,7 @@ const MainWidgetsDropdown = () => {
                     backgroundColor: 'transparent',
                     borderColor: 'rgba(255,255,255,.55)',
                     pointBackgroundColor: getStyle('--cui-warning'),
-                    data: serviceCountHistoryData
-                      ? serviceCountHistoryData
-                      : [78, 81, 80, 45, 34, 12, 40],
+                    data: serviceCountHistoryData ? serviceCountHistoryData : [0, 0, 0, 0, 0, 0, 0],
                     fill: true,
                   },
                 ],
@@ -340,8 +341,8 @@ const MainWidgetsDropdown = () => {
                     },
                   },
                   y: {
-                    min: serviceCountHistoryData ? Math.min(...serviceCountHistoryData) - 1 : 0,
-                    max: serviceCountHistoryData ? Math.max(...serviceCountHistoryData) + 1 : 40,
+                    min: serviceCountHistoryData ? Math.min(...serviceCountHistoryData) - 1 : -1,
+                    max: serviceCountHistoryData ? Math.max(...serviceCountHistoryData) + 1 : 1,
                     display: false,
                     grid: {
                       display: false,
@@ -410,9 +411,7 @@ const MainWidgetsDropdown = () => {
                     backgroundColor: 'transparent',
                     borderColor: 'rgba(255,255,255,.55)',
                     pointBackgroundColor: getStyle('--cui-danger'),
-                    data: serviceCountHistoryData
-                      ? incomePerServicesData
-                      : [78, 81, 80, 45, 34, 12, 40],
+                    data: serviceCountHistoryData ? incomePerServicesData : [0, 0, 0, 0, 0, 0, 0],
                   },
                 ],
               }}

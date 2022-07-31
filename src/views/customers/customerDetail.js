@@ -13,28 +13,32 @@ import {
 } from '@coreui/react'
 
 import { Link, useLocation, useParams } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function getCustomer(id) {
-  return fetch(`http://127.0.0.1:8000/profiles/customers/${id}`, {
+async function getCustomer(id, token) {
+  return fetch(`${API_URL}/profiles/customers/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getAddresses(id) {
-  return fetch(`http://127.0.0.1:8000/profiles/customers/${id}/address`, {
+async function getAddresses(id, token) {
+  return fetch(`${API_URL}/profiles/customers/${id}/address/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const CustomerDetail = () => {
+  const { token } = useToken()
+
   const { id } = useParams()
 
   const [name, setName] = useState('')
@@ -58,11 +62,11 @@ const CustomerDetail = () => {
   useEffect(() => {
     if (!loaded) {
       setLoaded(true)
-      getCustomer(id).then((c) => {
+      getCustomer(id, token).then((c) => {
         setCustomer(c)
         console.log(c)
       })
-      getAddresses(id).then((ad) => setAddresses(ad))
+      getAddresses(id, token).then((ad) => setAddresses(ad))
     }
 
     console.log(id)

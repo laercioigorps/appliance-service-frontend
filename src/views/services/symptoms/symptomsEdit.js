@@ -21,39 +21,43 @@ import {
 } from '@coreui/react'
 import { DocsCallout, DocsExample } from 'src/components'
 import { useParams } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function updateSymptoms(historic_id, bd) {
-  return fetch(`http://127.0.0.1:8000/appliances/historics/${historic_id}/`, {
+async function updateSymptoms(historic_id, bd, token) {
+  return fetch(`${API_URL}/appliances/historics/${historic_id}/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify(bd),
   }).then((data) => data.json())
 }
 
-async function listSymptoms() {
-  return fetch('http://127.0.0.1:8000/appliances/symptoms', {
+async function listSymptoms(token) {
+  return fetch(`${API_URL}/appliances/symptoms`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getHistoric(id) {
-  return fetch(`http://127.0.0.1:8000/appliances/historics/${id}`, {
+async function getHistoric(id, token) {
+  return fetch(`${API_URL}/appliances/historics/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const SymptomsEdit = () => {
+  const { token } = useToken()
+
   const { service_id, historic_id } = useParams()
 
   const [service, setService] = useState()
@@ -66,10 +70,10 @@ const SymptomsEdit = () => {
   useEffect(() => {
     if (!loaded) {
       setLoaded(true)
-      listSymptoms().then((symp) => {
+      listSymptoms(token).then((symp) => {
         setSymptoms(symp)
       })
-      getHistoric(historic_id).then((c) => {
+      getHistoric(historic_id, token).then((c) => {
         setMySymptoms(c.symptoms)
       })
     }
@@ -90,7 +94,7 @@ const SymptomsEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     let body = { symptoms: mySymptoms }
-    updateSymptoms(historic_id, body).then((symptoms) => {
+    updateSymptoms(historic_id, body, token).then((symptoms) => {
       if (symptoms) {
         navigate(`/services/${service_id}`)
       } else {

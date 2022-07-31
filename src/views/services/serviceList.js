@@ -18,23 +18,26 @@ import {
 import { DocsCallout, DocsExample } from 'src/components'
 import { Link } from 'react-router-dom'
 import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function listServices() {
+async function listServices(token) {
   return fetch(`${API_URL}/services/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const ServiceList = () => {
+  const { token } = useToken()
+
   const [services, setServices] = useState([])
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    listServices().then((services) => {
+    listServices(token).then((services) => {
       if (!mounted) {
         setMounted(true)
         setServices(services)

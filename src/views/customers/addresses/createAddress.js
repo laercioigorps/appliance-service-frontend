@@ -20,19 +20,23 @@ import {
   CTableRow,
 } from '@coreui/react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function createAddressToCustomer(customer_id, body) {
-  return fetch(`http://127.0.0.1:8000/profiles/customers/${customer_id}/address/`, {
+async function createAddressToCustomer(customer_id, body, token) {
+  return fetch(`${API_URL}/profiles/customers/${customer_id}/address/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify(body),
   }).then((data) => data.json())
 }
 
 const CreateAddressToCustomer = () => {
+  const { token } = useToken()
+
   const { id } = useParams()
 
   const [street, setStreet] = useState('')
@@ -60,7 +64,7 @@ const CreateAddressToCustomer = () => {
       coordinates,
       type,
     }
-    createAddressToCustomer(id, bd).then((response) => navigate(`/customers/${id}`))
+    createAddressToCustomer(id, bd, token).then((response) => navigate(`/customers/${id}`))
   }
 
   return (

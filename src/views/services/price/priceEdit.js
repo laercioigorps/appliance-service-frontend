@@ -12,29 +12,33 @@ import {
   CRow,
 } from '@coreui/react'
 import { useParams } from 'react-router-dom'
+import useToken from 'src/components/App/useToken'
+import { API_URL } from 'src/components/App/urls'
 
-async function updatePrice(service_id, bd) {
-  return fetch(`http://127.0.0.1:8000/services/${service_id}/`, {
+async function updatePrice(service_id, bd, token) {
+  return fetch(`${API_URL}/services/${service_id}/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify(bd),
   }).then((data) => data.json())
 }
 
-async function getService(id) {
-  return fetch(`http://127.0.0.1:8000/services/${id}`, {
+async function getService(id, token) {
+  return fetch(`${API_URL}/services/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const ServicePriceEdit = () => {
+  const { token } = useToken()
+
   const { service_id } = useParams()
 
   const [service, setService] = useState()
@@ -48,7 +52,7 @@ const ServicePriceEdit = () => {
   useEffect(() => {
     if (!loaded) {
       setLoaded(true)
-      getService(service_id).then((s) => {
+      getService(service_id, token).then((s) => {
         console.log(s)
         setPrice(s.price)
         setService(s)
@@ -64,7 +68,7 @@ const ServicePriceEdit = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     let bd = { price: price }
-    updatePrice(service.id, bd).then((service) => {
+    updatePrice(service.id, bd, token).then((service) => {
       if (service) {
         navigate(`/services/${service.id}`)
       }

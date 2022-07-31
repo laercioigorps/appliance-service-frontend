@@ -12,39 +12,43 @@ import {
   CRow,
 } from '@coreui/react'
 import { useParams } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function updateService(service_id, bd) {
-  return fetch(`http://127.0.0.1:8000/services/${service_id}`, {
+async function updateService(service_id, bd, token) {
+  return fetch(`${API_URL}/services/${service_id}/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify(bd),
   }).then((data) => data.json())
 }
 
-async function getService(service_id) {
-  return fetch(`http://127.0.0.1:8000/services/${service_id}`, {
+async function getService(service_id, token) {
+  return fetch(`${API_URL}/services/${service_id}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getAddresseses(id) {
-  return fetch(`http://127.0.0.1:8000/profiles/customers/${id}/address`, {
+async function getAddresseses(id, token) {
+  return fetch(`${API_URL}/profiles/customers/${id}/address/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const SelectServiceAddress = () => {
+  const { token } = useToken()
+
   const { service_id } = useParams()
   const [loaded, setLoaded] = useState(false)
   const [addresses, setAddresses] = useState(false)
@@ -55,11 +59,11 @@ const SelectServiceAddress = () => {
 
   useEffect(() => {
     if (!loaded) {
-      getService(service_id).then((h) => {
+      getService(service_id, token).then((h) => {
         if (h) {
           setService(h)
 
-          getAddresseses(h.customer.id).then((ads) => {
+          getAddresseses(h.customer.id, token).then((ads) => {
             setAddresses(ads)
             setMyAddress(h.address ? h.address.id : ads[0].id)
             console.log(ads)
@@ -82,7 +86,7 @@ const SelectServiceAddress = () => {
     let body = {
       address: myAddress,
     }
-    updateService(service_id, body).then((service) => {
+    updateService(service_id, body, token).then((service) => {
       if (service) {
         console.log('done')
         console.log(service)

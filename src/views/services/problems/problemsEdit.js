@@ -11,39 +11,43 @@ import {
   CRow,
 } from '@coreui/react'
 import { useParams } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function updateProblems(historic_id, bd) {
-  return fetch(`http://127.0.0.1:8000/appliances/historics/${historic_id}/`, {
+async function updateProblems(historic_id, bd, token) {
+  return fetch(`${API_URL}/appliances/historics/${historic_id}/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify(bd),
   }).then((data) => data.json())
 }
 
-async function listProblems() {
-  return fetch('http://127.0.0.1:8000/appliances/problems', {
+async function listProblems(token) {
+  return fetch(`${API_URL}/appliances/problems`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getHistoric(id) {
-  return fetch(`http://127.0.0.1:8000/appliances/historics/${id}`, {
+async function getHistoric(id, token) {
+  return fetch(`${API_URL}/appliances/historics/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const ProblemsEdit = () => {
+  const { token } = useToken()
+
   const { service_id, historic_id } = useParams()
 
   const [service, setService] = useState()
@@ -56,10 +60,10 @@ const ProblemsEdit = () => {
   useEffect(() => {
     if (!loaded) {
       setLoaded(true)
-      listProblems().then((symp) => {
+      listProblems(token).then((symp) => {
         setProblems(symp)
       })
-      getHistoric(historic_id).then((c) => {
+      getHistoric(historic_id, token).then((c) => {
         setMyProblems(c.problems)
       })
     }
@@ -80,7 +84,7 @@ const ProblemsEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     let body = { problems: myProblems }
-    updateProblems(historic_id, body).then((problems) => {
+    updateProblems(historic_id, body, token).then((problems) => {
       if (problems) {
         navigate(`/services/${service_id}`)
       } else {

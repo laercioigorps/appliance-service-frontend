@@ -12,39 +12,43 @@ import {
   CRow,
 } from '@coreui/react'
 import { useParams } from 'react-router-dom'
+import { API_URL } from 'src/components/App/urls'
+import useToken from 'src/components/App/useToken'
 
-async function updateStatus(service_id, bd) {
-  return fetch(`http://127.0.0.1:8000/services/${service_id}/`, {
+async function updateStatus(service_id, bd, token) {
+  return fetch(`${API_URL}/services/${service_id}/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify(bd),
   }).then((data) => data.json())
 }
 
-async function listStatus() {
-  return fetch('http://127.0.0.1:8000/services/status', {
+async function listStatus(token) {
+  return fetch(`${API_URL}/services/status`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
-async function getService(id) {
-  return fetch(`http://127.0.0.1:8000/services/${id}`, {
+async function getService(id, token) {
+  return fetch(`${API_URL}/services/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Token ' + localStorage.getItem('token'),
+      Authorization: `Token ${token}`,
     },
   }).then((data) => data.json())
 }
 
 const StatusEdit = () => {
+  const { token } = useToken()
+
   const { service_id } = useParams()
   const [statuses, setStatuses] = useState()
   const [loaded, setLoaded] = useState(false)
@@ -55,9 +59,9 @@ const StatusEdit = () => {
 
   useEffect(() => {
     if (!loaded) {
-      listStatus().then((st) => {
+      listStatus(token).then((st) => {
         setStatuses(st)
-        getService(service_id).then((s) => {
+        getService(service_id, token).then((s) => {
           if (s.status) {
             setMyStatus(s.status.id)
           } else {
@@ -82,7 +86,7 @@ const StatusEdit = () => {
     let body = {
       status: myStatus,
     }
-    updateStatus(service_id, body).then((service) => {
+    updateStatus(service_id, body, token).then((service) => {
       if (service) {
         navigate(`/services/${service_id}`)
       } else {

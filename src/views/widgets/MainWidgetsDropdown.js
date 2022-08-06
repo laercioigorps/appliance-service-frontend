@@ -190,7 +190,10 @@ const MainWidgetsDropdown = () => {
           color="info"
           value={
             <>
-              ${incomeHistoryData ? incomeHistoryData[incomeHistoryData.length - 1] : '00.0'}{' '}
+              $
+              {incomeHistoryData
+                ? incomeHistoryData[incomeHistoryData.length - 1].toFixed(2)
+                : '00.0'}{' '}
               <span className="fs-6 fw-normal">
                 ({incomeDifference}%{' '}
                 <CIcon icon={incomeDifference > 0 ? cilArrowTop : cilArrowBottom} />)
@@ -369,7 +372,7 @@ const MainWidgetsDropdown = () => {
             <>
               {'$ '}
               {incomePerServicesData
-                ? incomePerServicesData[incomePerServicesData.length - 1]
+                ? incomePerServicesData[incomePerServicesData.length - 1].toFixed(2)
                 : '0'}{' '}
               <span className="fs-6 fw-normal">
                 ({incomePerServicesDifference}%{' '}

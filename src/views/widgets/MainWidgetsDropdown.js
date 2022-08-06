@@ -159,8 +159,6 @@ const MainWidgetsDropdown = () => {
                     },
                   },
                   y: {
-                    min: loaded && customerData ? Math.min(...customerData) - 5 : -1,
-                    max: loaded && customerData ? Math.max(...customerData) + 5 : 1,
                     display: false,
                     grid: {
                       display: false,
@@ -249,8 +247,6 @@ const MainWidgetsDropdown = () => {
                     },
                   },
                   y: {
-                    min: incomeHistoryData ? Math.min(...incomeHistoryData) - 100 : -1,
-                    max: incomeHistoryData ? Math.max(...incomeHistoryData) + 100 : 1,
                     display: false,
                     grid: {
                       display: false,
@@ -341,8 +337,6 @@ const MainWidgetsDropdown = () => {
                     },
                   },
                   y: {
-                    min: serviceCountHistoryData ? Math.min(...serviceCountHistoryData) - 1 : -1,
-                    max: serviceCountHistoryData ? Math.max(...serviceCountHistoryData) + 1 : 1,
                     display: false,
                     grid: {
                       display: false,

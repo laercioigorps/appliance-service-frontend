@@ -5,8 +5,8 @@ import {
   CCardBody,
   CCardHeader,
   CCol,
-  CFormCheck,
-  CFormSwitch,
+  CPagination,
+  CPaginationItem,
   CRow,
   CTable,
   CTableBody,
@@ -15,13 +15,12 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { DocsCallout, DocsExample } from 'src/components'
 import { Link } from 'react-router-dom'
 import { API_URL } from 'src/components/App/urls'
 import useToken from 'src/components/App/useToken'
 
-async function listServices(token) {
-  return fetch(`${API_URL}/services/`, {
+async function listServices(token, page) {
+  return fetch(`${API_URL}/services/?limit=15&offset=${(page - 1) * 10}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -36,15 +35,38 @@ const ServiceList = () => {
   const [services, setServices] = useState([])
   const [mounted, setMounted] = useState(false)
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const [previousPage, setPreviousPage] = useState(null)
+  const [nextPage, setNextPage] = useState(null)
+
   useEffect(() => {
-    listServices(token).then((services) => {
+    listServices(token, currentPage).then((services) => {
       if (!mounted) {
         setMounted(true)
-        setServices(services)
+        setServices(services.results)
+        setNextPage(services.next)
+        setPreviousPage(services.previous)
+        setMounted(true)
       }
     })
-    console.log(services)
   })
+
+  const goToNextPage = () => {
+    goToPage(currentPage + 1)
+  }
+
+  const goToPreviousPage = () => {
+    goToPage(currentPage - 1)
+  }
+
+  const goToPage = (page) => {
+    listServices(token, page).then((services) => {
+      setCurrentPage(page)
+      setServices(services.results)
+      setNextPage(services.next)
+      setPreviousPage(services.previous)
+    })
+  }
 
   const listItems = services.map((service) => (
     <CTableRow key={service.id}>
@@ -87,6 +109,18 @@ const ServiceList = () => {
               </CTableHead>
               <CTableBody>{listItems}</CTableBody>
             </CTable>
+            <CPagination aria-label="Page navigation example">
+              <CPaginationItem
+                onClick={() => goToPreviousPage()}
+                disabled={previousPage ? false : true}
+              >
+                Previous
+              </CPaginationItem>
+              <CPaginationItem>{currentPage}</CPaginationItem>
+              <CPaginationItem disabled={nextPage ? false : true} onClick={() => goToNextPage()}>
+                Next
+              </CPaginationItem>
+            </CPagination>
           </CCardBody>
         </CCard>
       </CCol>

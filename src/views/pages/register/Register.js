@@ -15,9 +15,10 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import PropTypes from 'prop-types'
+import { API_URL } from 'src/components/App/urls'
 
 async function RegisterUser(credentials) {
-  return fetch('https://iginapp.herokuapp.com/rest-auth/registration/', {
+  return fetch(`${API_URL}/dj-rest-auth/registration/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -35,13 +36,13 @@ const Register = ({ setToken }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const token = await RegisterUser({
+    const json = await RegisterUser({
       username,
       email,
       password1,
       password2,
     })
-    setToken({ token: token.key })
+    setToken({ token: json.key })
 
     return navigate('/')
   }

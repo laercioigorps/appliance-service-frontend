@@ -20,7 +20,7 @@ import { API_URL } from 'src/components/App/urls'
 import useToken from 'src/components/App/useToken'
 
 async function listServices(token, page) {
-  return fetch(`${API_URL}/services/?limit=15&offset=${(page - 1) * 10}`, {
+  return fetch(`${API_URL}/services/?limit=15&offset=${(page - 1) * 15}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

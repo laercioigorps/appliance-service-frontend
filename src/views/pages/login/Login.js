@@ -17,9 +17,10 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import PropTypes from 'prop-types'
+import { API_URL } from 'src/components/App/urls'
 
 async function loginUser(credentials) {
-  return fetch('http://127.0.0.1:8000/dj-rest-auth/login/', {
+  return fetch(`${API_URL}/dj-rest-auth/login/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -126,6 +126,7 @@ const routes = [
     name: 'Generate Data',
     element: GenerateSampleData,
   },
+  { path: '/logout', name: 'Logout', element: Logout },
 ]
 
 export default routes

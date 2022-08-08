@@ -13,6 +13,7 @@ import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
 import useToken from 'src/components/App/useToken'
+import { API_URL } from 'src/components/App/urls'
 
 function divideMatrix(matrix1, matrix2) {
   let mat = []
@@ -23,7 +24,7 @@ function divideMatrix(matrix1, matrix2) {
 }
 
 async function getCustomerHistory(token) {
-  return fetch('http://127.0.0.1:8000/profiles/customer-history', {
+  return fetch(`${API_URL}/profiles/customer-history`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -33,7 +34,7 @@ async function getCustomerHistory(token) {
 }
 
 async function getServiceHistory(token) {
-  return fetch('http://127.0.0.1:8000/services/service-history', {
+  return fetch(`${API_URL}/services/service-history`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

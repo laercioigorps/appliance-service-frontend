@@ -22,9 +22,10 @@ import {
 import { CChart } from '@coreui/react-chartjs'
 import MainWidgetsDropdown from '../widgets/MainWidgetsDropdown'
 import useToken from 'src/components/App/useToken'
+import { API_URL } from 'src/components/App/urls'
 
 async function getServiceStatus(days, token) {
-  return fetch(`http://127.0.0.1:8000/services/services-by-status/${days}/`, {
+  return fetch(`${API_URL}/services/services-by-status/${days}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ async function getServiceStatus(days, token) {
 }
 
 async function getTopCustomersIncome(quantity, token) {
-  return fetch(`http://127.0.0.1:8000/services/top-customers-income/${quantity}/`, {
+  return fetch(`${API_URL}/services/top-customers-income/${quantity}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -44,7 +45,7 @@ async function getTopCustomersIncome(quantity, token) {
 }
 
 async function getTopCustomersServices(quantity, token) {
-  return fetch(`http://127.0.0.1:8000/services/top-customers-services/${quantity}/`, {
+  return fetch(`${API_URL}/services/top-customers-services/${quantity}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

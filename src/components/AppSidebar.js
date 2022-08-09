@@ -14,6 +14,7 @@ import 'simplebar/dist/simplebar.min.css'
 
 // sidebar nav config
 import navigation from '../_nav'
+import { cilFridge, cillaundry, cilRoom } from '@coreui/icons'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
@@ -30,7 +31,15 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
-        <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
+        <CIcon className="sidebar-brand-full" title="Laercio Souza" icon={cilRoom} height={35} />
+        <CIcon
+          className="sidebar-brand-full me-3"
+          title="Laercio Souza"
+          icon={cilFridge}
+          height={35}
+        />
+        {''}
+        Appliance Services
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
       </CSidebarBrand>
       <CSidebarNav>

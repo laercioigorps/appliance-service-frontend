@@ -22,18 +22,23 @@ import { DocsCallout, DocsExample } from 'src/components'
 import useToken from 'src/components/App/useToken'
 import { API_URL } from 'src/components/App/urls'
 
-async function generateData(token) {
+async function generateData(token, body) {
   return fetch(`${API_URL}/services/sample-create/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Token ${token}`,
     },
+    body: JSON.stringify(body),
   }).then((data) => data.json())
 }
 
 const handleClick = (token) => {
-  generateData(token).then((resp) => console.log(resp))
+  let body = {
+    customers: 10,
+    services: 10,
+  }
+  generateData(token, body).then((resp) => console.log(resp))
 }
 
 const GenerateSampleData = () => {
